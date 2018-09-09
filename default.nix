@@ -9,12 +9,16 @@ let
     test = ./test;
   });
 
-  hie-nix = import (fetchTarball {
-    url = "https://github.com/domenkozar/hie-nix/archive/96af698f0cfefdb4c3375fc199374856b88978dc.tar.gz";
-    sha256 = "1ar0h12ysh9wnkgnvhz891lvis6x9s8w3shaakfdkamxvji868qa";
-  }) { inherit pkgs; };
+
+  # I thought these 2 were equivalent, but the first one fails, the second one doesn't
+  # Error is "Got error while processing diagnostics: <command line>: cannot satisfy -package-id hnix-0.5.2-5hMz8sQY4ky2OCdjsvbD9J"
+  failingEnv = hpkgs.shellFor {
+    packages = p: [ p.test ];
+  };
+
+  workingEnv = hpkgs.test.env;
 
 in
-  hpkgs.test.env.overrideAttrs (drv: {
-    buildInputs = drv.buildInputs or [] ++ [ hpkgs.cabal-install hie-nix.hie84 ];
+  workingEnv.overrideAttrs (old: {
+    buildInputs = old.buildInputs or [] ++ [ hpkgs.cabal-install ];
   })
