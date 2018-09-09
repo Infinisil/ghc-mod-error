@@ -6,7 +6,7 @@
 
 let 
   hpkgs = pkgs.haskellPackages.extend (pkgs.haskell.lib.packageSourceOverrides {
-    test = ./.;
+    test = ./test;
   });
 
   hie-nix = import (fetchTarball {
